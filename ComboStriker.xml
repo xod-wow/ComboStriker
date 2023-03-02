@@ -1,0 +1,21 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+
+  <Script file="ComboStriker.lua"/>
+
+  <Frame name="ComboStrikerOverlayTemplate" mixin="ComboStrikerOverlayMixin" hidden="true" virtual="true">
+    <Scripts>
+      <OnLoad method="OnLoad" />
+    </Scripts>
+    <Anchors>
+      <Anchor point="CENTER" />
+    </Anchors>
+    <Layers>
+      <Layer level="ARTWORK">
+        <Texture parentKey="Texture" setAllPoints="true" alphaMode="ADD">
+            <Color r="1" g="0" b="0" a="0.33" />
+        </Texture>
+      </Layer>
+    </Layers>
+  </Frame>
+
+</Ui>

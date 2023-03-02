@@ -1,0 +1,7 @@
+## Interface: 100005
+## Title: ComboStriker
+## Version: @project-version@
+## Author: Xodiv-Nagrand
+## Email: mib@post.com
+
+ComboStriker.xml
