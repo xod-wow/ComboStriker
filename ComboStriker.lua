@@ -51,7 +51,7 @@ end
 
 function ComboStriker:UNIT_SPELLCAST_SUCCEEDED(unit, castGUID, spellID)
     -- Note RegisterUnitEvent so don't need to check unit, always player
-    if ComboStrikeSpellIDs[spellID] then
+    if ComboStrikeSpellIDs[spellID] and InCombatLockdown() then
         previousSpellID = spellID
         self:UpdateAllOverlays()
     end
