@@ -84,7 +84,9 @@ function ComboStrikerOverlayMixin:OnLoad()
     -- Bump it so it's on top of the cooldown frame
     local parent = self:GetParent()
     self:SetFrameLevel(parent.cooldown:GetFrameLevel() + 1)
-    self:SetSize(parent:GetSize())
+    self:SetSize(parent.icon:GetSize())
+    local mask = parent.icon:GetMaskTexture(1)
+    self.Texture:AddMaskTexture(mask)
 end
 
 function ComboStrikerOverlayMixin:GetActionSpellID()
