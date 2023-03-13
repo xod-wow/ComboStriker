@@ -36,16 +36,39 @@ ComboStriker:RegisterEvent('PLAYER_LOGIN')
 ComboStriker:SetScript('OnEvent',
     function (self, e, ...) if self[e] then self[e](self, ...) end end)
 
-function ComboStriker:PLAYER_LOGIN()
+function ComboStriker:EnableDisable()
     if IsSpellKnown(MASTERY_COMBO_STRIKES_SPELL_ID) then
+        print('ComboStriker Enabled')
+        self:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
+        self:RegisterEvent('PLAYER_REGEN_ENABLED')
+    else
+        print('ComboStriker Disabled')
+        self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED')
+        self:UnregisterEvent('PLAYER_REGEN_ENABLED')
+    end
+    self.previousSpellID = nil
+    self:UpdateAllOverlays()
+end
+
+function ComboStriker:TRAIT_CONFIG_UPDATED()
+    self:EnableDisable()
+end
+
+function ComboStriker:PLAYER_SPECIALIZATION_CHANGED()
+    self:EnableDisable()
+end
+
+function ComboStriker:PLAYER_LOGIN()
+    if select(2, UnitClass('player')) == 'MONK' then
         self.overlayFrames = {}
         for _, actionButton in pairs(ActionBarButtonEventsFrame.frames) do
             if actionButton:GetName():sub(1,8) ~= 'Override' then
                 self:CreateOverlay(actionButton)
             end
         end
-        self:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
-        self:RegisterEvent('PLAYER_REGEN_ENABLED')
+        self:RegisterEvent('TRAIT_CONFIG_UPDATED')
+        self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
+        self:EnableDisable()
     end
 end
 
