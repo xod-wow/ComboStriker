@@ -140,5 +140,6 @@ end
 
 function ComboStrikerOverlayMixin:Update()
     local id = self:GetActionSpellID()
+    self:GetParent().icon:SetDesaturated(id and id == previousSpellID)
     self:SetShown(id and id == previousSpellID)
 end
