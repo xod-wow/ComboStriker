@@ -54,8 +54,10 @@ function ComboStriker:TRAIT_CONFIG_UPDATED()
     self:EnableDisable()
 end
 
-function ComboStriker:PLAYER_SPECIALIZATION_CHANGED()
-    self:EnableDisable()
+function ComboStriker:PLAYER_SPECIALIZATION_CHANGED(unit)
+    if unit == 'player' then
+        self:EnableDisable()
+    end
 end
 
 function ComboStriker:PLAYER_LOGIN()
