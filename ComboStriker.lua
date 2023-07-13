@@ -41,10 +41,12 @@ function ComboStriker:EnableDisable()
         print('ComboStriker Enabled')
         self:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
         self:RegisterEvent('PLAYER_REGEN_ENABLED')
+        self:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
     else
         print('ComboStriker Disabled')
         self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED')
         self:UnregisterEvent('PLAYER_REGEN_ENABLED')
+        self:UnregisterEvent('ACTIONBAR_SLOT_CHANGED')
     end
     self.previousSpellID = nil
     self:UpdateAllOverlays()
@@ -80,6 +82,10 @@ function ComboStriker:UNIT_SPELLCAST_SUCCEEDED(unit, castGUID, spellID)
         previousSpellID = spellID
         self:UpdateAllOverlays()
     end
+end
+
+function ComboStriker:ACTIONBAR_SLOT_CHANGED()
+    self:UpdateAllOverlays()
 end
 
 function ComboStriker:PLAYER_REGEN_ENABLED()
