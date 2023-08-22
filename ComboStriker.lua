@@ -37,6 +37,9 @@ ComboStriker:SetScript('OnEvent',
     function (self, e, ...) if self[e] then self[e](self, ...) end end)
 
 function ComboStriker:EnableDisable()
+    if not self.isDirty then return end
+    self.isDirty = nil
+
     if IsSpellKnown(MASTERY_COMBO_STRIKES_SPELL_ID) then
         print('ComboStriker Enabled')
         self:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
@@ -52,13 +55,20 @@ function ComboStriker:EnableDisable()
     self:UpdateAllOverlays()
 end
 
-function ComboStriker:TRAIT_CONFIG_UPDATED()
-    self:EnableDisable()
+function ComboStriker:TriggerEnableDisable()
+    self.isDirty = true
+    C_Timer.After(0, function () self:EnableDisable() end)
+end
+
+function ComboStriker:TRAIT_CONFIG_UPDATED(id)
+    if id == C_ClassTalents.GetActiveConfigID() then
+        self:TriggerEnableDisable()
+    end
 end
 
 function ComboStriker:PLAYER_SPECIALIZATION_CHANGED(unit)
     if unit == 'player' then
-        self:EnableDisable()
+        self:TriggerEnableDisable()
     end
 end
 
@@ -72,7 +82,7 @@ function ComboStriker:PLAYER_LOGIN()
         end
         self:RegisterEvent('TRAIT_CONFIG_UPDATED')
         self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
-        self:EnableDisable()
+        self:TriggerEnableDisable()
     end
 end
 
