@@ -26,7 +26,7 @@ local ComboStrikeSpellIDs = {
     [387184] = true,            -- Weapons of Order
     [152175] = true,            -- Whirling Dragon Punch
 }
-    
+
 local previousSpellID
 
 --[[------------------------------------------------------------------------]]--
