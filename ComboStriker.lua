@@ -9,17 +9,16 @@ local MASTERY_COMBO_STRIKES_SPELL_ID = 115636
 
 local ComboStrikeSpellIDs = {
     [100784] = true,            -- Blackout Kick
-    [386276] = true,            -- Bonedust Brew
     [123986] = true,            -- Chi Burst
-    [115098] = true,            -- Chi Wave
+--  [115098] = true,            -- Chi Wave
     [117952] = true,            -- Crackling Jade Lightning
-    [322101] = true,            -- Expel Harm
-    [388193] = true,            -- Faeline Stomp
+--  [322101] = true,            -- Expel Harm
+    [388193] = true,            -- Jadefire Stomp
     [113656] = true,            -- Fists of Fury
     [101545] = true,            -- Flying Serpent Kick
     [107428] = true,            -- Rising Sun Kick
-    [116847] = true,            -- Rushing Jade Wind
     [101546] = true,            -- Spinning Crane Kick
+    [137639] = true,            -- Storm, Earth and Fire
     [392983] = true,            -- Strike of the Windlord
     [100780] = true,            -- Tiger Palm
     [322109] = true,            -- Touch of Death
@@ -40,7 +39,7 @@ function ComboStriker:EnableDisable()
     if not self.isDirty then return end
     self.isDirty = nil
 
-    if IsSpellKnown(MASTERY_COMBO_STRIKES_SPELL_ID) then
+    if IsPlayerSpell(MASTERY_COMBO_STRIKES_SPELL_ID) then
         print('ComboStriker Enabled')
         self:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
         self:RegisterEvent('PLAYER_REGEN_ENABLED')
@@ -139,20 +138,8 @@ function ComboStrikerOverlayMixin:GetActionSpellID()
         return id
     end
 
-    if type == 'item' then
-        local _, spellID = GetItemSpell(id)
-        return spellID
-    end
-
-    if type == 'macro' then
-        local itemName = GetMacroItem(id)
-        if itemName then
-            local name, spellID = GetItemSpell(itemName)
-            return spellID
-        else
-            local spellID = GetMacroSpell(id)
-            return spellID
-        end
+    if type == 'macro' and subType == 'spell' then
+        return id
     end
 end
 
