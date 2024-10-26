@@ -5,14 +5,14 @@
 
 ----------------------------------------------------------------------------]]--
 
+
 local MASTERY_COMBO_STRIKES_SPELL_ID = 115636
 
 local ComboStrikeSpellIDs = {
     [100784] = true,            -- Blackout Kick
     [123986] = true,            -- Chi Burst
---  [115098] = true,            -- Chi Wave
+    [443028] = true,            -- Celestial Conduit
     [117952] = true,            -- Crackling Jade Lightning
---  [322101] = true,            -- Expel Harm
     [388193] = true,            -- Jadefire Stomp
     [113656] = true,            -- Fists of Fury
     [101545] = true,            -- Flying Serpent Kick
