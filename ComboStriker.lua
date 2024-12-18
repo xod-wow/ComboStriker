@@ -15,7 +15,6 @@ local ComboStrikeSpellIDs = {
     [117952] = true,            -- Crackling Jade Lightning
     [388193] = true,            -- Jadefire Stomp
     [113656] = true,            -- Fists of Fury
-    [101545] = true,            -- Flying Serpent Kick
     [107428] = true,            -- Rising Sun Kick
     [101546] = true,            -- Spinning Crane Kick
     [137639] = true,            -- Storm, Earth and Fire
@@ -25,6 +24,7 @@ local ComboStrikeSpellIDs = {
     [387184] = true,            -- Weapons of Order
     [152175] = true,            -- Whirling Dragon Punch
 }
+
 
 local previousSpellID
 
