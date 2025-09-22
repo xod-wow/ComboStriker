@@ -10,20 +10,21 @@ local MASTERY_COMBO_STRIKES_SPELL_ID = 115636
 
 local ComboStrikeSpellIDs = {
     [100784]    = true,         -- Blackout Kick
-    [123986]    = true,         -- Chi Burst
+    [386276]    = true,         -- Bonedust Brew (in Shadowlands)
     [443028]    = true,         -- Celestial Conduit
+    [123986]    = true,         -- Chi Burst
     [117952]    = true,         -- Crackling Jade Lightning
     [388193]    = true,         -- Jadefire Stomp
     [113656]    = true,         -- Fists of Fury
     [107428]    = true,         -- Rising Sun Kick
+    [1217413]   = true,         -- Slicing Winds
     [101546]    = true,         -- Spinning Crane Kick
     [137639]    = true,         -- Storm, Earth and Fire
     [392983]    = true,         -- Strike of the Windlord
     [100780]    = true,         -- Tiger Palm
     [322109]    = true,         -- Touch of Death
-    [387184]    = true,         -- Weapons of Order
+    [387184]    = true,         -- Weapons of Order (in Shadowlands)
     [152175]    = true,         -- Whirling Dragon Punch
-    [1217413]   = true,         -- Slicing Winds ?
 }
 
 
