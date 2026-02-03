@@ -8,25 +8,41 @@
 
 local MASTERY_COMBO_STRIKES_SPELL_ID = 115636
 
+--  These vals are new (Midnight) buffs that track the last ability used. The
+--  cooldown viewers pull this from the buffs but the data is secret in
+--  combat so it's only helpful getting the ID initially.
+--
+--  You can get these from the linkedSpellIDs table in
+--      C_CooldownViewer.GetCooldownViewerCooldownInfo(70297)
+--  but it only contains things you are specced into.
+
 local ComboStrikeSpellIDs = {
-    [100784]    = true,         -- Blackout Kick
-    [386276]    = true,         -- Bonedust Brew (in Shadowlands)
-    [443028]    = true,         -- Celestial Conduit
-    [123986]    = true,         -- Chi Burst
-    [117952]    = true,         -- Crackling Jade Lightning
-    [388193]    = true,         -- Jadefire Stomp
-    [113656]    = true,         -- Fists of Fury
-    [107428]    = true,         -- Rising Sun Kick
-    [1217413]   = true,         -- Slicing Winds
-    [101546]    = true,         -- Spinning Crane Kick
-    [137639]    = true,         -- Storm, Earth and Fire
-    [392983]    = true,         -- Strike of the Windlord
-    [100780]    = true,         -- Tiger Palm
-    [322109]    = true,         -- Touch of Death
-    [387184]    = true,         -- Weapons of Order (in Shadowlands)
-    [152175]    = true,         -- Whirling Dragon Punch
+    [100784]    = 1249757,      -- Blackout Kick
+    [443028]    = 1249790,      -- Celestial Conduit
+    [117952]    = 1249764,      -- Crackling Jade Lightning
+    [113656]    = 1249758,      -- Fists of Fury
+    [107428]    = 1249753,      -- Rising Sun Kick
+    [1250566]   = 1250987,      -- Rushing Wind Kick
+    [1217413]   = 1249759,      -- Slicing Winds
+    [101546]    = 1249754,      -- Spinning Crane Kick
+    [137639]    = 1249762,      -- Storm, Earth and Fire
+    [392983]    = 1249766,      -- Strike of the Windlord
+    [100780]    = 1249756,      -- Tiger Palm
+    [322109]    = 1249791,      -- Touch of Death
+    [152175]    = 1249765,      -- Whirling Dragon Punch
+    [1249625]   = 1249763,      -- Zenith
 }
 
+local ComboStrikeAuraIDs = tInvert(ComboStrikeSpellIDs)
+
+local function GetPreviousSpellID()
+    for auraSpellID, spellID in pairs(ComboStrikeAuraIDs) do
+        -- Doesn't return a secret, just nil in combat
+        if C_UnitAuras.GetPlayerAuraBySpellID(auraSpellID) then
+            return spellID
+        end
+    end
+end
 
 local previousSpellID
 
@@ -37,42 +53,6 @@ ComboStriker:RegisterEvent('PLAYER_LOGIN')
 ComboStriker:SetScript('OnEvent',
     function (self, e, ...) if self[e] then self[e](self, ...) end end)
 
-function ComboStriker:EnableDisable()
-    if not self.isDirty then return end
-    self.isDirty = nil
-
-    if IsPlayerSpell(MASTERY_COMBO_STRIKES_SPELL_ID) then
-        print('ComboStriker Enabled')
-        self:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
-        self:RegisterEvent('PLAYER_REGEN_ENABLED')
-        self:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
-    else
-        print('ComboStriker Disabled')
-        self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED')
-        self:UnregisterEvent('PLAYER_REGEN_ENABLED')
-        self:UnregisterEvent('ACTIONBAR_SLOT_CHANGED')
-    end
-    self.previousSpellID = nil
-    self:UpdateAllOverlays()
-end
-
-function ComboStriker:TriggerEnableDisable()
-    self.isDirty = true
-    C_Timer.After(0, function () self:EnableDisable() end)
-end
-
-function ComboStriker:TRAIT_CONFIG_UPDATED(id)
-    if id == C_ClassTalents.GetActiveConfigID() then
-        self:TriggerEnableDisable()
-    end
-end
-
-function ComboStriker:PLAYER_SPECIALIZATION_CHANGED(unit)
-    if unit == 'player' then
-        self:TriggerEnableDisable()
-    end
-end
-
 function ComboStriker:PLAYER_LOGIN()
     if select(2, UnitClass('player')) == 'MONK' then
         self.overlayFrames = {}
@@ -81,15 +61,13 @@ function ComboStriker:PLAYER_LOGIN()
                 self:CreateOverlay(actionButton)
             end
         end
-        self:RegisterEvent('TRAIT_CONFIG_UPDATED')
-        self:RegisterEvent('PLAYER_SPECIALIZATION_CHANGED')
-        self:TriggerEnableDisable()
+        self:RegisterEvent('PLAYER_REGEN_DISABLED')
     end
 end
 
-function ComboStriker:UNIT_SPELLCAST_SUCCEEDED(unit, castGUID, spellID)
+function ComboStriker:UNIT_SPELLCAST_SUCCEEDED(_unit, _castGUID, spellID)
     -- Note RegisterUnitEvent so don't need to check unit, always player
-    if ComboStrikeSpellIDs[spellID] and InCombatLockdown() then
+    if ComboStrikeSpellIDs[spellID] then
         previousSpellID = spellID
         self:UpdateAllOverlays()
     end
@@ -99,7 +77,20 @@ function ComboStriker:ACTIONBAR_SLOT_CHANGED()
     self:UpdateAllOverlays()
 end
 
+function ComboStriker:PLAYER_REGEN_DISABLED()
+    if IsPlayerSpell(MASTERY_COMBO_STRIKES_SPELL_ID) then
+        self:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
+        self:RegisterEvent('PLAYER_REGEN_ENABLED')
+        self:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
+        previousSpellID = GetPreviousSpellID()
+        self:UpdateAllOverlays()
+    end
+end
+
 function ComboStriker:PLAYER_REGEN_ENABLED()
+    self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED')
+    self:UnregisterEvent('PLAYER_REGEN_ENABLED')
+    self:UnregisterEvent('ACTIONBAR_SLOT_CHANGED')
     previousSpellID = nil
     self:UpdateAllOverlays()
 end
