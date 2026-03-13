@@ -73,7 +73,7 @@ function ComboStriker:UNIT_SPELLCAST_SUCCEEDED(_unit, _castGUID, spellID)
     end
 end
 
-function ComboStriker:ACTIONBAR_SLOT_CHANGED()
+function ComboStriker:SPELLS_CHANGED()
     self:UpdateAllOverlays()
 end
 
@@ -81,7 +81,7 @@ function ComboStriker:PLAYER_REGEN_DISABLED()
     if IsPlayerSpell(MASTERY_COMBO_STRIKES_SPELL_ID) then
         self:RegisterUnitEvent('UNIT_SPELLCAST_SUCCEEDED', 'player')
         self:RegisterEvent('PLAYER_REGEN_ENABLED')
-        self:RegisterEvent('ACTIONBAR_SLOT_CHANGED')
+        self:RegisterEvent('SPELLS_CHANGED')
         previousSpellID = GetPreviousSpellID()
         self:UpdateAllOverlays()
     end
@@ -90,7 +90,7 @@ end
 function ComboStriker:PLAYER_REGEN_ENABLED()
     self:UnregisterEvent('UNIT_SPELLCAST_SUCCEEDED')
     self:UnregisterEvent('PLAYER_REGEN_ENABLED')
-    self:UnregisterEvent('ACTIONBAR_SLOT_CHANGED')
+    self:UnregisterEvent('SPELLS_CHANGED')
     previousSpellID = nil
     self:UpdateAllOverlays()
 end
