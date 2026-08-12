@@ -36,6 +36,9 @@ local ComboStrikeSpellIDs = {
 local ComboStrikeAuraIDs = tInvert(ComboStrikeSpellIDs)
 
 local function GetPreviousSpellID()
+    if C_Secrets.ShouldAurasBeSecret() then
+        return
+    end
     for auraSpellID, spellID in pairs(ComboStrikeAuraIDs) do
         -- Doesn't return a secret, just nil in combat
         if C_UnitAuras.GetPlayerAuraBySpellID(auraSpellID) then
@@ -66,9 +69,10 @@ function ComboStriker:PLAYER_LOGIN()
 end
 
 function ComboStriker:UNIT_SPELLCAST_SUCCEEDED(_unit, _castGUID, spellID)
+    local baseSpellID = C_Spell.GetBaseSpell(spellID)
     -- Note RegisterUnitEvent so don't need to check unit, always player
-    if ComboStrikeSpellIDs[spellID] then
-        previousSpellID = spellID
+    if ComboStrikeSpellIDs[baseSpellID] then
+        previousSpellID = baseSpellID
         self:UpdateAllOverlays()
     end
 end
@@ -138,6 +142,7 @@ end
 
 function ComboStrikerOverlayMixin:Update()
     local id = self:GetActionSpellID()
+    id = id and C_Spell.GetBaseSpell(id)
     self:GetParent().icon:SetDesaturated(id and id == previousSpellID)
     self:SetShown(id and id == previousSpellID)
 end
