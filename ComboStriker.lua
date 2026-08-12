@@ -30,7 +30,7 @@ local ComboStrikeSpellIDs = {
     [100780]    = 1249756,      -- Tiger Palm
     [322109]    = 1249791,      -- Touch of Death
     [152175]    = 1249765,      -- Whirling Dragon Punch
-    [1249625]   = 1249763,      -- Zenith
+    [1272696]   = 1249763,      -- Zenith Stomp
 }
 
 local ComboStrikeAuraIDs = tInvert(ComboStrikeSpellIDs)
@@ -69,10 +69,13 @@ function ComboStriker:PLAYER_LOGIN()
 end
 
 function ComboStriker:UNIT_SPELLCAST_SUCCEEDED(_unit, _castGUID, spellID)
-    local baseSpellID = C_Spell.GetBaseSpell(spellID)
+    -- Free Zenith Stomp from Zenith triggers Zenith Stomp combo
+    if spellID == 1249625 then
+        spellID = 1272696
+    end
     -- Note RegisterUnitEvent so don't need to check unit, always player
-    if ComboStrikeSpellIDs[baseSpellID] then
-        previousSpellID = baseSpellID
+    if ComboStrikeSpellIDs[spellID] then
+        previousSpellID = spellID
         self:UpdateAllOverlays()
     end
 end
@@ -142,7 +145,6 @@ end
 
 function ComboStrikerOverlayMixin:Update()
     local id = self:GetActionSpellID()
-    id = id and C_Spell.GetBaseSpell(id)
     self:GetParent().icon:SetDesaturated(id and id == previousSpellID)
     self:SetShown(id and id == previousSpellID)
 end
